@@ -63,6 +63,8 @@ public class SpringTest extends AbstractBlueprintIntegrationTest {
         assertNotNull(bundles);
         bundles.start();
 
+        Thread.sleep(500); //allow registration to happen
+
         //Asserting NS blacklisting
         assertEquals(1, Arrays.stream(bundles.getRegisteredServices()).filter(sr -> sr.getProperty("osgi.service.blueprint.namespace") != null).count());
         assertTrue(Arrays.stream(bundles.getRegisteredServices()).anyMatch(sr -> sr.getProperty("osgi.service.blueprint.namespace").equals("http://www.springframework.org/schema/good")));
