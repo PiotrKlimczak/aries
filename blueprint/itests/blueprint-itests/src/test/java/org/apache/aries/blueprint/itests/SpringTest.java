@@ -49,16 +49,23 @@ public class SpringTest extends AbstractBlueprintIntegrationTest {
         BeanCItf beanC = (BeanCItf) list.get(4);
         assertEquals(1, beanC.getInitialized());
 
-        //Asserting NS blacklisting
-        assertEquals(1, Arrays.stream(bundles.getRegisteredServices()).filter(sr -> sr.getProperty("osgi.service.blueprint.namespace") != null).count());
-        assertTrue(Arrays.stream(bundles.getRegisteredServices()).anyMatch(sr -> sr.getProperty("osgi.service.blueprint.namespace").equals("http://www.springframework.org/schema/good")));
-
         try {
             beanC.doSomething();
             fail("Should have thrown an exception because the transaction manager is not defined");
         } catch (NoSuchBeanDefinitionException e) {
             // expected
         }
+    }
+
+    @Test
+    public void testSpringNsHandlerBlacklist() throws Exception {
+        Bundle bundles = context().getBundleByName("org.apache.aries.blueprint.testbundles");
+        assertNotNull(bundles);
+        bundles.start();
+
+        //Asserting NS blacklisting
+        assertEquals(1, Arrays.stream(bundles.getRegisteredServices()).filter(sr -> sr.getProperty("osgi.service.blueprint.namespace") != null).count());
+        assertTrue(Arrays.stream(bundles.getRegisteredServices()).anyMatch(sr -> sr.getProperty("osgi.service.blueprint.namespace").equals("http://www.springframework.org/schema/good")));
     }
 
     @org.ops4j.pax.exam.Configuration
